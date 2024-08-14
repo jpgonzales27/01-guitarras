@@ -5,14 +5,23 @@ import Header from "./components/Header";
 import { db } from "./data/db";
 
 function App() {
+  const initialCartData = () => {
+    const localStorageCart = localStorage.getItem("cartStorage");
+    return localStorageCart ? JSON.parse(localStorageCart) : [];
+  };
+
   const [data, setData] = useState([]);
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(initialCartData);
   const MAX_QUANTITY = 5;
   const MIN_QUANTITY = 1;
 
   useEffect(() => {
     setData(db);
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("cartStorage", JSON.stringify(cart));
+  }, [cart]);
 
   function addToCart(item) {
     const itemExits = cart.findIndex((guitar) => guitar.id === item.id);
