@@ -7,6 +7,8 @@ import { db } from "./data/db";
 function App() {
   const [data, setData] = useState([]);
   const [cart, setCart] = useState([]);
+  const MAX_QUANTITY = 5;
+  const MIN_QUANTITY = 1;
 
   useEffect(() => {
     setData(db);
@@ -28,9 +30,50 @@ function App() {
     }
   }
 
+  function removeFromCart(id) {
+    setCart((prevState) => prevState.filter((item) => item.id !== id));
+  }
+
+  function increaseQuantity(id) {
+    const updateCart = cart.map((item) => {
+      if (item.id === id && item.quantity < MAX_QUANTITY) {
+        return {
+          ...item,
+          quantity: item.quantity + 1,
+        };
+      }
+      return item;
+    });
+
+    setCart(updateCart);
+  }
+
+  function decrementQuantity(id) {
+    const updateCart = cart.map((item) => {
+      if (item.id === id && item.quantity > MIN_QUANTITY) {
+        return {
+          ...item,
+          quantity: item.quantity - 1,
+        };
+      }
+      return item;
+    });
+    setCart(updateCart);
+  }
+
+  function clearCart() {
+    setCart([]);
+  }
+
   return (
     <>
-      <Header cart={cart} />
+      <Header
+        cart={cart}
+        removeFromCart={removeFromCart}
+        increaseQuantity={increaseQuantity}
+        decrementQuantity={decrementQuantity}
+        clearCart={clearCart}
+      />
 
       <main className="container-xl mt-5">
         <h2 className="text-center">Nuestra Colección</h2>
